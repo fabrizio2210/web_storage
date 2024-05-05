@@ -20,8 +20,9 @@ import (
 
 
 type StoredObject struct {
-  Bytes []byte `json: "bytes"`
-  ContentType string `json: "content-type"`
+  Bytes []byte
+  ContentType string
+  RequireAuthentication bool
 }
 
 var validate = validator.New()
@@ -30,18 +31,6 @@ func GetObject() gin.HandlerFunc {
   return func(c *gin.Context) {
     _, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
-
-    // Do not authorize if wrong API_KEY.
-    if (len(c.Request.Header["Api-Key"]) == 0) || (c.Request.Header["Api-Key"][0] != os.Getenv("API_KEY")) {
-      c.JSON(
-        http.StatusUnauthorized,
-        responses.Response{
-          Status: http.StatusUnauthorized,
-          Message: "Not authorized.",
-        },
-      )
-      return
-    }
 
     objectId := c.Param("objectId")
     marshalledObject := rediswrapper.Get(objectId)
@@ -67,6 +56,20 @@ func GetObject() gin.HandlerFunc {
       )
       return
     }
+
+    if object.RequireAuthentication {
+      if (len(c.Request.Header["Api-Key"]) == 0) || (c.Request.Header["Api-Key"][0] != os.Getenv("API_KEY")) {
+        c.JSON(
+          http.StatusUnauthorized,
+          responses.Response{
+            Status: http.StatusUnauthorized,
+            Message: "Not authorized.",
+          },
+        )
+        return
+      }
+    }
+
     c.Data(http.StatusOK, object.ContentType, object.Bytes)
   }
 }
@@ -127,6 +130,7 @@ func PostNewObject() gin.HandlerFunc {
     object := StoredObject{
       Bytes: binary,
       ContentType: data.ContentType,
+      RequireAuthentication: data.RequireAuthentication,
     }
     marshalledObject, err := json.Marshal(object)
     if err != nil {
