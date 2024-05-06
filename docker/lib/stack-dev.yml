@@ -49,7 +49,7 @@ services:
     networks:
       - backends
   api:
-    image: fabrizio2210/photobook-api-dev
+    image: fabrizio2210/webstorage-api-dev
     labels:
       traefik.port: 80
       traefik.enable: "true"
