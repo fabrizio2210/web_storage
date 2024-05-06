@@ -12,6 +12,9 @@ import (
 
 func setupRouter() *gin.Engine {
   r := gin.Default()
+  if os.Getenv("STORAGE_PATH") != "" {
+    routes.StoragePath = os.Getenv("STORAGE_PATH")
+  }
   routes.StorageRoute(r)
   return r
 }

@@ -53,12 +53,13 @@ services:
     labels:
       traefik.port: 80
       traefik.enable: "true"
-      traefik.api.rule: "PathPrefix(`/storage`)"
+      traefik.api.rule: "PathPrefix(`/resources`)"
       traefik.http.services.api-service.loadbalancer.server.port: 5000
-      traefik.http.routers.api.rule: "PathPrefix(`/storage`)"
+      traefik.http.routers.api.rule: "PathPrefix(`/resources`)"
     environment:
       REDIS_HOST: redis
       API_KEY: TEST
+      STORAGE_PATH: "/resources/"
     volumes:
       - ../../src/go/:/usr/src/app
     networks:

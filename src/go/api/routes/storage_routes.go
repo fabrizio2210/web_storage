@@ -6,8 +6,10 @@ import (
   "github.com/gin-gonic/gin"
 )
 
+var StoragePath = "storage"
+
 func StorageRoute(router *gin.Engine) {
   // router.DELETE("/api/photo/:photoId", controllers.DeleteObject())
-  router.GET(   "/storage/*objectId", controllers.GetObject())
-  router.POST(  "/storage/*objectId",      controllers.PostNewObject())
+  router.GET(   StoragePath + "/*objectId", controllers.GetObject())
+  router.POST(  StoragePath + "/*objectId", controllers.PostNewObject())
 }
