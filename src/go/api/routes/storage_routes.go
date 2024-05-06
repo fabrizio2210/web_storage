@@ -9,7 +9,7 @@ import (
 var StoragePath = "storage"
 
 func StorageRoute(router *gin.Engine) {
-  // router.DELETE("/api/photo/:photoId", controllers.DeleteObject())
+  router.DELETE(StoragePath + "/*objectId", controllers.DeleteObject())
   router.GET(   StoragePath + "/*objectId", controllers.GetObject())
   router.POST(  StoragePath + "/*objectId", controllers.PostNewObject())
 }

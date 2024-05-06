@@ -32,3 +32,8 @@ func Get(key string) []byte{
   }
   return []byte(val)
 }
+
+func Delete(key string) int64{
+  res, _ := RedisClient.Del(ctx, key).Result()
+  return res
+}

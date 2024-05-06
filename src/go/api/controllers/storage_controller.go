@@ -177,3 +177,26 @@ func maybeGetForm(c *gin.Context, data any) bool {
   return true
 }
 
+func DeleteObject() gin.HandlerFunc {
+  return func(c *gin.Context) {
+    _, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+    // Do not authorize if wrong API_KEY.
+    if (len(c.Request.Header["Api-Key"]) == 0) || (c.Request.Header["Api-Key"][0] != os.Getenv("API_KEY")) {
+      c.JSON(
+        http.StatusUnauthorized,
+        responses.Response{
+          Status: http.StatusUnauthorized,
+          Message: "Not authorized.",
+        },
+      )
+      return
+    }
+
+    objectId := c.Param("objectId")
+
+    rediswrapper.Delete(objectId)
+    log.Printf("Object deleted:%v", objectId)
+  }
+}
