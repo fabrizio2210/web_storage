@@ -11,5 +11,5 @@ var StoragePath = "storage"
 func StorageRoute(router *gin.Engine) {
   router.DELETE(StoragePath + "/*objectId", controllers.DeleteObject())
   router.GET(   StoragePath + "/*objectId", controllers.GetObject())
-  router.POST(  StoragePath + "/*objectId", controllers.PostNewObject())
+  router.POST(  StoragePath + "/*objectId", controllers.PostObject())
 }

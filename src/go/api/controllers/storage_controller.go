@@ -74,7 +74,7 @@ func GetObject() gin.HandlerFunc {
   }
 }
 
-func PostNewObject() gin.HandlerFunc {
+func PostObject() gin.HandlerFunc {
   return func(c *gin.Context) {
     _, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
@@ -120,6 +120,18 @@ func PostNewObject() gin.HandlerFunc {
         responses.Response{
           Status: http.StatusBadRequest,
           Message: fmt.Sprintf("Error: expected 1 file, found %d in the request.", len(files)),
+        },
+      )
+      return
+    }
+
+    if data.Override == false && rediswrapper.Get(objectId) != nil {
+      c.JSON(
+        http.StatusBadRequest,
+        responses.Response{
+          Status: http.StatusBadRequest,
+          Message: "Error: trying to override an " +
+                   "object when the \"override\" parameter is false.",
         },
       )
       return
